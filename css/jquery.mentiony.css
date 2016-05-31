@@ -1,0 +1,37 @@
+/* Bootstrap3 is required for default styling */
+
+.mentiony-container{ position:relative;height:auto; border:1px solid #cecece}
+.mentiony-container .pl0{ padding-left:0;}
+.mentiony-container .mention-input-hidden{float:left; display:inline-block; visibility:hidden; width:0;height:0; margin:0; padding:0;opacity:0;}
+
+.mentiony-container .mentiony-popover{
+	position:absolute;
+	z-index:1000;
+	top:100%; left:0; /* Default */
+	width:280px;
+	height:auto;
+	max-height:400px;
+	display:none;
+	border:1px solid #eee;
+	border-radius:4px;
+	padding:0;
+	background:#fefefe;
+	overflow: scroll;
+}
+
+.mentiony-container .mentiony-content {
+	outline: none;
+}
+
+.mentiony-list{list-style:none; width: 100%; padding:0;margin: 0;}
+.mentiony-item{border-top:1px solid #eee; height: 50px; padding: 5px 10px; cursor:pointer}
+.mentiony-item:first-child{border:none}
+.mentiony-item:hover{ background:#ededed;}
+.mentiony-item.active{ background:#ddd;}
+.mentiony-item img{ width:40px; height:40px; }
+
+.mentiony-item .title, .mentiony-item .help-block{ margin:0;}
+.mentiony-item .title{}
+.mentiony-item .help-block{}
+.mentiony-container .mention-area .highlight a.mentiony-link{color:white; background:#009688; padding: 1px 4px; border-radius: 3px;}
+
