@@ -7,6 +7,7 @@
  *
  * License: MIT License - http://www.opensource.org/licenses/mit-license.php
  */
+var tmpEle = null;
 
 (function ($) {
     var KEY = {
@@ -68,7 +69,7 @@
                                   '</li>',
                 normalText:       '<span class="normal-text">&nbsp;</span>',
                 highlight:        '<span class="highlight"></span>',
-                highlightContent: '<a href="[HREF]" class="mentiony-link">[TEXT]</a>',
+                highlightContent: '<a href="[HREF]" data-item-id="[ITEM_ID]" class="mentiony-link">[TEXT]</a>',
             }
         };
 
@@ -95,7 +96,7 @@
         var elmInputBoxContainer, elmInputBoxContent, elmInputBox,
             elmInputBoxInitialWidth, elmInputBoxInitialHeight,
             editableContentLineHeightPx,
-            popoverEle, list,
+            popoverEle, list, elmInputBoxId,
             elmInputBoxContentAbsPosition = {top: 0, left: 0},
             dropDownShowing = false,
             events          = {
@@ -126,7 +127,15 @@
                 return;
             } else {
                 elmInputBox.attr('data-mentions-input', 'true');
+
+                if (elmInputBox.attr('id').length == 0) {
+                    elmInputBoxId = 'mentiony-input-' + inputId;
+                    elmInputBox.attr('id', elmInputBoxId);
+                } else {
+                    elmInputBoxId = elmInputBox.attr('id');
+                }
             }
+
 
             // Initial UI information
             elmInputBoxInitialWidth = elmInputBox.prop('scrollWidth');
@@ -146,13 +155,13 @@
             elmInputBoxContainer.append(popoverEle);
             popoverEle.append(list);
 
+            // Reset the input
+            elmInputBox = $('#' + elmInputBoxId);
 
             // Update initial UI
-            elmInputBoxContainer.css({
-                width:   (elmInputBoxInitialWidth + 2 * settings.containerPaddingPx) + 'px',
-                padding: settings.containerPaddingPx + 'px',
-            });
-            elmInputBoxContent.width(elmInputBoxInitialWidth + 'px');
+            var containerPadding = parseInt(elmInputBoxContainer.css('padding'));
+            elmInputBoxContainer.css({width: (elmInputBoxInitialWidth) + 'px'});
+            elmInputBoxContent.width((elmInputBoxInitialWidth - 2 * containerPadding) + 'px');
             elmInputBoxContent.css({minHeight: elmInputBoxInitialHeight + 'px'});
 
             elmInputBoxContentAbsPosition = elmInputBoxContent.offset();
@@ -226,7 +235,7 @@
             // log(events, 'events');
 
             if (events.input) {
-                updateDataOnKeyUp(e);
+                updateDataInputData(e);
             }
 
             if (needMention) {
@@ -258,10 +267,11 @@
          * Save content to original textarea element, using for form submit to server-side
          * @param e
          */
-        function updateDataOnKeyUp(e) {
-            elmInputBoxText = elmInputBoxContent.html();
+        function updateDataInputData(e) {
+            var elmInputBoxText = elmInputBoxContent.html();
             elmInputBox.val(elmInputBoxText);
             log(elmInputBox.val(), 'elmInputBoxText : ');
+            tmpEle = elmInputBox;
         }
 
         /**
@@ -480,6 +490,7 @@
             var highlightContentNode = $(settings.templates.highlightContent
                 .replace('[HREF]', currentMentionItemData.href)
                 .replace('[TEXT]', currentMentionItemData.name)
+                .replace('[ITEM_ID]', currentMentionItemData.id)
             );
             highlightNode.append(highlightContentNode);
             replaceTextInRange('@' + currentMention.keyword, highlightNode.prop('outerHTML'), chooseByMouse);
@@ -492,6 +503,7 @@
             currentMention.keyword = ''; // reset current Data if start with @
 
             hideDropDown();
+            updateDataInputData();
         }
 
         function log(msg, prefix, level) {
