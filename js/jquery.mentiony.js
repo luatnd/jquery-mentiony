@@ -146,6 +146,12 @@ var tmpEle = null;
             elmInputBoxContent = $(settings.templates.content.replace('[ID]', inputId));
 
             // Make UI and hide the textarea
+            var placeholderText = elmInputBox.attr('placeholder');
+            if (typeof placeholderText === 'undefined') {
+                placeholderText = elmInputBox.text();
+            }
+            elmInputBoxContent.attr('data-placeholder', placeholderText);
+
             elmInputBoxContainer.append(elmInputBox.clone().addClass('mention-input-hidden'));
             elmInputBoxContainer.append(elmInputBoxContent);
             elmInputBox.replaceWith(elmInputBoxContainer);
@@ -385,6 +391,9 @@ var tmpEle = null;
             }
 
             var textNodeData = node.data;
+            if (typeof textNodeData === 'undefined') {
+                textNodeData = '';
+            }
             var cursorPosition = getSelectionEndPositionInCurrentLine(); // passing the js DOM ele
 
             // Save current position for mouse click handling, because when you use mouse, no selection was found.
@@ -538,9 +547,15 @@ var tmpEle = null;
 
             if (choosedByMouse !== 'undefined' && choosedByMouse === true) {
                 var lastActiveNode = currentMention.lastActiveNode;
+                try {
+                    var offset = lastActiveNode.data.length;
+                } catch (e) {
+                    log(e, 'lastActiveNode Error:');
+                    var offset = 0;
+                }
 
                 range = document.createRange();
-                range.setStart(lastActiveNode, lastActiveNode.data.length);
+                range.setStart(lastActiveNode, offset);
                 range.collapse(true);
                 sel.removeAllRanges();
                 sel.addRange(range);
