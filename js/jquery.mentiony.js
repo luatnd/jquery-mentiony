@@ -45,6 +45,13 @@ var tmpEle = null;
             triggerChar:        '@', // @keyword-to-mention
             onDataRequest:      $.noop, // a function for mention data processing
 
+            /**
+             * A function for addition processing on input:
+             * Why we need this:
+             *  Because some original js was binded to textarea, we need to bind it to contenteditable too.
+             */
+            onInput:            $.noop,
+
             // adjust popover relative position with its parent.
             popoverOffset:      {
                 x: -30,
@@ -229,6 +236,8 @@ var tmpEle = null;
         function onInputBoxInput() {
             // log('onInputBoxInput');
             events.input = true;
+
+            settings.onInput.call(this, elmInputBox, elmInputBoxContent);
         }
 
         /**
