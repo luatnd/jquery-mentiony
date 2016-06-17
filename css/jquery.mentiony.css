@@ -1,5 +1,10 @@
 /* Bootstrap3 is required for default styling */
 
+.mentiony-container [contenteditable=true]:empty:not(:focus):before{
+	content:attr(data-placeholder);
+	color:#999999;
+}
+
 .mentiony-container{ position:relative;height:auto; border:1px solid #cecece;
 	/* NOTE: All top-right-bottom-left must be equal */
 	padding:10px;
