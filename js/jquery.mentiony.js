@@ -39,18 +39,52 @@ var tmpEle = null;
     jQuery.fn.mentiony = function (method, options) {
         var defaults = {
             debug:              0, // Set 1 to see console log message of this plugin
-            containerPaddingPx: 10, // css: OOOpx
+
+            /**
+             * True [default] will make mention area size equal to initial size of textarea. NOTE: Textarea must visible on document ready if this value is true.
+             * False will not specify the CSS width attribute to every mention area.
+             */
+            applyInitialSize:   true,
+
             globalTimeout:      null, // Don't overwrite this config
             timeOut:            400, // Do mention only when user input idle time > this value
             triggerChar:        '@', // @keyword-to-mention
-            onDataRequest:      $.noop, // a function for mention data processing
 
             /**
-             * A function for addition processing on input:
-             * Why we need this:
-             *  Because some original js was binded to textarea, we need to bind it to contenteditable too.
+             * Function for mention data processing
+             * @param mode
+             * @param keyword
+             * @param onDataRequestCompleteCallback
              */
-            onInput:            $.noop,
+            onDataRequest: function (mode, keyword, onDataRequestCompleteCallback) {
+
+            },
+
+            /**
+             * Addition keyboard event handle for old and new input
+             * Why we need this:
+             *  • Because some original js was binded to textarea, we need to bind it to contenteditable too.
+             *  • Useful when you wanna passing some event trigger of old element to new editable content
+             *  • Old input element already be trigger some event, then you need to pass some needed event to new editable element
+             * @param event
+             * @param oldInputEle
+             * @param newEditableEle
+             */
+            onKeyPress: function (event, oldInputEle, newEditableEle) {
+                oldInputEle.trigger(event);
+            },
+            onKeyUp:    function (event, oldInputEle, newEditableEle) {
+                oldInputEle.trigger(event);
+            },
+            onBlur:     function (event, oldInputEle, newEditableEle) {
+                oldInputEle.trigger(event);
+            },
+            onPaste:    function (event, oldInputEle, newEditableEle) {
+                oldInputEle.trigger(event);
+            },
+            onInput: function (oldInputEle, newEditableEle) {
+
+            },
 
             // adjust popover relative position with its parent.
             popoverOffset:      {
@@ -173,8 +207,16 @@ var tmpEle = null;
 
             // Update initial UI
             var containerPadding = parseInt(elmInputBoxContainer.css('padding'));
-            elmInputBoxContainer.css({width: (elmInputBoxInitialWidth) + 'px'});
-            elmInputBoxContent.width((elmInputBoxInitialWidth - 2 * containerPadding) + 'px');
+
+            if (settings.applyInitialSize) {
+                elmInputBoxContainer.addClass('initial-size');
+                elmInputBoxContainer.css({width: (elmInputBoxInitialWidth) + 'px'});
+                elmInputBoxContent.width((elmInputBoxInitialWidth - 2 * containerPadding) + 'px');
+            }
+            else {
+                elmInputBoxContainer.addClass('auto-size');
+            }
+
             elmInputBoxContent.css({minHeight: elmInputBoxInitialHeight + 'px'});
 
             elmInputBoxContentAbsPosition = elmInputBoxContent.offset();
@@ -187,7 +229,8 @@ var tmpEle = null;
             elmInputBoxContent.bind('input', onInputBoxInput);
             elmInputBoxContent.bind('keyup', onInputBoxKeyUp);
             elmInputBoxContent.bind('click', onInputBoxClick);
-            // elmInputBoxContent.bind('blur', onInputBoxBlur);
+            elmInputBoxContent.bind('blur', onInputBoxBlur);
+            elmInputBoxContent.bind('paste', onInputBoxPaste);
         }
 
         /**
@@ -226,6 +269,8 @@ var tmpEle = null;
                 needMention = (e.keyCode === KEY.AT);
                 // log(needMention, 'needMention', 'info');
             }
+
+            settings.onKeyPress.call(this, e, elmInputBox, elmInputBoxContent);
         }
 
 
@@ -260,6 +305,8 @@ var tmpEle = null;
                     doSearchAndShow();
                 }
             }
+
+            settings.onKeyUp.call(this, e, elmInputBox, elmInputBoxContent);
         }
 
         function onInputBoxClick(e) {
@@ -269,6 +316,18 @@ var tmpEle = null;
                 updateMentionKeyword(e);
                 doSearchAndShow();
             }
+        }
+
+        function onInputBoxBlur(e) {
+            // log('onInputBoxBlur');
+
+            settings.onBlur.call(this, e, elmInputBox, elmInputBoxContent);
+        }
+
+        function onInputBoxPaste(e) {
+            // log('onInputBoxPaste');
+
+            settings.onPaste.call(this, e, elmInputBox, elmInputBoxContent);
         }
 
         function onListItemClick(e) {
@@ -284,9 +343,27 @@ var tmpEle = null;
          */
         function updateDataInputData(e) {
             var elmInputBoxText = elmInputBoxContent.html();
-            elmInputBox.val(elmInputBoxText);
+            elmInputBox.val(convertSpace(elmInputBoxText));
             log(elmInputBox.val(), 'elmInputBoxText : ');
             tmpEle = elmInputBox;
+        }
+
+        /**
+         * Trim space and &nbsp; from string
+         * @param text
+         * @returns {*|void|string|XML}
+         */
+        function trimSpace(text) {
+            return text.replace(/^(&nbsp;|&nbsp|\s)+|(&nbsp;|&nbsp|\s)+$/g, '');
+        }
+
+        /**
+         * Convert &nbsp; to space
+         * @param text
+         * @returns {*|void|string|XML}
+         */
+        function convertSpace(text) {
+            return text.replace(/(&nbsp;)+/g, ' ');
         }
 
         /**
