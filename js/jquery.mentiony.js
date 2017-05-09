@@ -425,7 +425,7 @@ var tmpEle = null;
             dropDownShowing = true;
             popoverEle.css({
                 display: 'block',
-                top:     curAbsPos.y - elmInputBoxContentAbsPosition.top + (editableContentLineHeightPx + 10),
+                top:     curAbsPos.y - (elmInputBoxContentAbsPosition.top - $(document).scrollTop()) + (editableContentLineHeightPx + 10),
                 left:    curAbsPos.x - elmInputBoxContentAbsPosition.left
             });
         }
