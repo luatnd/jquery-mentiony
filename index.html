@@ -12,86 +12,196 @@
         <!-- Bootstrap -->
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="css/jquery.mentiony.css" >
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+        <style>
+            textarea {width: 100%}
+            .mentiony-container, .mentiony-content{width: 100%!important;}
+            .demo-item{ height: 300px;}
+            .demo-item .demo, .demo-item .demo > *{ height: 100%; }
+            .demo-item .code, .demo-item .code > *{ height: 100%; }
+            .demo-item .code, .demo-item .code > pre > code{ padding: 0; background: none }
+            .demo-item .code > pre > code{
+                width: 999px !important;
+                display: block;
+            }
+            pre.prettyprint {
+                background-color: #693d3d!important;
+            }
+        </style>
     </head>
     <body>
-        <h1>Top</h1>
+        <div class="container">
+            <h2>Jquery-metiony demo - user guide</h2>
+            <p class="help-block">This plugin focus on mention. If you wanna do <b>fuzzy search</b> + <b>highlight</b> search result, feel free integrate those plugin by your self</p>
+            <p class="help-block">There are so many feature that need to improve. Currently, I do not use Jquery anymore, so no improvement of this repository will be made</p>
+            <p class="help-block">
+                These is textarea was transformed to div[contenteditable].<br>
+                Try to type @John to mention anyone whose name John.<br>
+                Use keyboard ← ↑ → ↓ or mouse to select.<br>
+            </p>
+            <div class="row demo-item">
+                <div class="col-sm-12"><h4>Mention anyone by @name</h4></div>
+                <div class="col-sm-6 demo">
+                    <textarea id="t1" name="mention1" class="mention1" rows="6">Try to @John</textarea>
+                </div>
+                <div class="col-sm-6 code">
+<pre class="prettyprint">
+<code class="javascript">
+$('textarea.mention1').mentiony({
+    onDataRequest: function (mode, keyword, onDataRequestCompleteCallback) {
 
-        <textarea id="t1" name="mention1" class="mention1" cols="60" rows="6"></textarea>
+        var data = [
+            { id:1, name:'Nguyen Luat', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+            { id:2, name:'Dinh Luat', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+            { id:3, name:'Max Luat', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+            { id:4, name:'John Neo', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+            { id:5, name:'John Dinh', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+            { id:6, name:'Test User', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+            { id:7, name:'Test User 2', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+            { id:8, name:'No Test', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+            { id:9, name:'The User Foo', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+            { id:10, name:'Foo Bar', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+        ];
 
-        <h1>Bottom</h1>
+        data = jQuery.grep(data, function( item ) {
+            return item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
+        });
 
-        <textarea id="t2" name="mention2" cols="60" rows="6"></textarea>
+        // Call this to populate mention.
+        onDataRequestCompleteCallback.call(this, data);
+    },
+    timeOut: 0,
+    debug: 1,
+});
+</code>
+</pre>
+                </div>
+            </div>
 
-        <h1>Foot</h1>
 
-        <textarea id="t3" name="" class="mention1" cols="60" rows="6"></textarea>
-        <h1>End</h1>
 
-        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-        <script src="js/jquery.mentiony.js"></script>
-        <script>
-            $('textarea.mention1').mentiony({
-                onDataRequest: function (mode, keyword, onDataRequestCompleteCallback) {
 
-                    var data = [
-                        { id:1, name:'Nguyen Luat', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:2, name:'Dinh Luat', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:3, name:'Max Luat', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:4, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:5, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:6, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:7, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:8, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:9, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:10, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:11, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:12, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:13, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:14, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:15, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:16, name:'John Neo', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:17, name:'Neo Nguyen Dinh', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam' , href: 'http://oxwall.dev/user/1234'},
-                        { id:18, name:'Neo Nguyen Dinh Luat', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'info':'Vietnam', href: 'http://oxwall.dev/user/1234' }
-                    ];
 
-                    data = jQuery.grep(data, function( item ) {
-                        return item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
-                    });
 
-                    // Call this to populate mention.
-                    onDataRequestCompleteCallback.call(this, data);
-                },
-                timeOut: 0,
-                debug: 1,
-            });
-        </script>
+            <div class="row demo-item">
+                <div class="col-sm-12"><h4>Use RESTAPI as data source</h4></div>
+                <div class="col-sm-6 demo">
+                    <textarea id="t2" name="mention2" class="mention2" rows="6">Try to @ then wait 500ms for the server responding, (assuming server response time is 500ms)</textarea>
+                </div>
+                <div class="col-sm-6 code">
+<pre class="prettyprint">
+<code class="javascript">
+$('textarea[name="mention2"]').mentiony({
+    onDataRequest: function (mode, keyword, onDataRequestCompleteCallback) {
 
-        <script>
-            $('textarea[name="mention2"]').mentiony({
-                onDataRequest: function (mode, keyword, onDataRequestCompleteCallback) {
+        $.ajax({
+            method: "GET",
+            url: "js/example.json?query="+ keyword,
+            dataType: "json",
+            success: function (response) {
+                var data = response;
 
-                    $.ajax({
-                        method: "GET",
-                        url: "js/example.json?query="+ keyword,
-                        dataType: "json",
-                        success: function (response) {
-                            var data = response;
+                // NOTE: Assuming this filter process was done on server-side
+                data = jQuery.grep(data, function( item ) {
+                    return item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
+                });
+                // End server-side
 
-                            // NOTE: Assuming this filter process was done on server-side
-                            data = jQuery.grep(data, function( item ) {
-                                return item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
-                            });
-                            // End server-side
+                // Call this to populate mention.
+                onDataRequestCompleteCallback.call(this, data);
+            }
+        });
 
-                            // Call this to populate mention.
-                            onDataRequestCompleteCallback.call(this, data);
-                        }
-                    });
+    },
+    timeOut: 500, // Timeout to show mention after press @
+    debug: 1, // show debug info
+});
+</code>
+</pre>
+                </div>
+            </div>
 
-                },
-                timeOut: 500,
-                debug: 1,
-            });
-        </script>
+
+
+            <div class="row demo-item">
+                <div class="col-sm-12"><h4>Feel free to styling your mentioned items:</h4></div>
+                <div class="col-sm-6 demo" id="red-mention-item">
+                    <style>
+                        #red-mention-item .mention-area .highlight a.mentiony-link {background: #ea0000}
+                    </style>
+                    <textarea id="t3" name="mention3" class="mention1" rows="6">Can run multiple instance on 1 pages. Try to @John</textarea>
+                </div>
+
+                <div class="col-sm-6 code">
+<pre class="prettyprint">
+<code class="css">
+    #red-mention-item .mention-area .highlight a.mentiony-link {background: #ea0000}
+</code>
+</pre>
+                </div>
+            </div>
+
+
+
+            <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+            <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=javascript&amp;skin=desert"></script>
+            <script src="js/jquery.mentiony.js"></script>
+            <script>
+                $('textarea.mention1').mentiony({
+                    onDataRequest: function (mode, keyword, onDataRequestCompleteCallback) {
+
+                        var data = [
+                            { id:1, name:'Nguyen Luat', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                            { id:2, name:'Dinh Luat', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                            { id:3, name:'Max Luat', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                            { id:4, name:'John Neo', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                            { id:5, name:'John Dinh', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                            { id:6, name:'Test User', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                            { id:7, name:'Test User 2', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                            { id:8, name:'No Test', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                            { id:9, name:'The User Foo', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                            { id:10, name:'Foo Bar', 'avatar':'https://goo.gl/WXAP1U', 'info':'Vietnam' , href: 'http://a.co/id'},
+                        ];
+
+                        data = jQuery.grep(data, function( item ) {
+                            return item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
+                        });
+
+                        // Call this to populate mention.
+                        onDataRequestCompleteCallback.call(this, data);
+                    },
+                    timeOut: 0,
+                    debug: 1,
+                });
+            </script>
+
+            <script>
+                $('textarea[name="mention2"]').mentiony({
+                    onDataRequest: function (mode, keyword, onDataRequestCompleteCallback) {
+
+                        $.ajax({
+                            method: "GET",
+                            url: "js/example.json?query="+ keyword,
+                            dataType: "json",
+                            success: function (response) {
+                                var data = response;
+
+                                // NOTE: Assuming this filter process was done on server-side
+                                data = jQuery.grep(data, function( item ) {
+                                    return item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
+                                });
+                                // End server-side
+
+                                // Call this to populate mention.
+                                onDataRequestCompleteCallback.call(this, data);
+                            }
+                        });
+
+                    },
+                    timeOut: 500, // Timeout to show mention after press @
+                    debug: 1, // show debug info
+                });
+            </script>
+        </div>
     </body>
 </html>
