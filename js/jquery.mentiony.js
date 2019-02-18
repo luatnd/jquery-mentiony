@@ -266,9 +266,12 @@ var tmpEle = null;
 
             if (!needMention) {
                 // Try to check if need mention
-                needMention = (e.keyCode === KEY.AT);
+                needMention = (e.keyCode === KEY.AT || e.which === KEY.AT);
                 // log(needMention, 'needMention', 'info');
             }
+
+            // force focus on element so it triggers on IE
+            content.click();
 
             settings.onKeyPress.call(this, e, elmInputBox, elmInputBoxContent);
         }
@@ -278,9 +281,20 @@ var tmpEle = null;
          * When input value was change, with any key effect the input value
          * Delete was trigger here
          */
-        function onInputBoxInput() {
+        function onInputBoxInput(e) {
             // log('onInputBoxInput');
             events.input = true;
+
+            // convert android character to codes so it could be matched 
+            var converted = e.originalEvent.data.charCodeAt(0);
+
+            // trigger mentiony on mobile devices
+            if (!needMention) {
+                needMention = ((e.keyCode === KEY.AT || e.which === KEY.AT) || (converted === KEY.AT));
+            } 
+
+            // force focus on element so it triggers on IE
+            content.click();
 
             settings.onInput.call(this, elmInputBox, elmInputBoxContent);
         }
@@ -300,7 +314,7 @@ var tmpEle = null;
 
             if (needMention) {
                 // Update mention keyword only inputing(not enter), left, right
-                if (e.keyCode !== KEY.RETURN && (events.input || e.keyCode === KEY.LEFT || e.keyCode === KEY.RIGHT)) {
+                if ((e.keyCode !== KEY.RETURN || e.which === KEY.RETURN) && (events.input || (e.keyCode === KEY.LEFT || e.which === KEY.LEFT) || (e.keyCode === KEY.RIGHT || e.which === KEY.RIGHT))) {
                     updateMentionKeyword(e);
                     doSearchAndShow();
                 }
@@ -446,15 +460,15 @@ var tmpEle = null;
                 return true;
             }
 
-            if (e.keyCode === KEY.UP || e.keyCode === KEY.DOWN) {
+            if ((e.keyCode === KEY.UP || e.which === KEY.UP) || (e.keyCode === KEY.DOWN || e.which === KEY.DOWN)) {
                 choosingMentionOptions(e);
                 return false;
             }
 
             // Try to exit mention state: Stop mention if @, Home, Enter, Tabs
-            if ((e.keyCode === KEY.HOME)
-                || (e.keyCode === KEY.RETURN)
-                || (e.keyCode === KEY.TAB)
+            if (((e.keyCode === KEY.HOME || e.which === KEY.HOME))
+                || ((e.keyCode === KEY.RETURN || e.which === KEY.RETURN))
+                || ((e.keyCode === KEY.TAB || e.which === KEY.TAB))
             ) {
                 choseMentionOptions();
                 return false;
@@ -549,9 +563,9 @@ var tmpEle = null;
 
             var item = [];
 
-            if (e.keyCode === KEY.DOWN) {
+            if (e.keyCode === KEY.DOWN || e.which === KEY.DOWN) {
                 item = currentMention.jqueryDomNode.next();
-            } else if (e.keyCode === KEY.UP) {
+            } else if (e.keyCode === KEY.UP || e.which === KEY.UP) {
                 item = currentMention.jqueryDomNode.prev();
             }
 
